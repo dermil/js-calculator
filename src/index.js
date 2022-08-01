@@ -8,7 +8,6 @@ import CalculatorApp from './Calculator';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
     <CalculatorApp />
   </React.StrictMode>
 );
