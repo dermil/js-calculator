@@ -86,7 +86,18 @@ const operatorInfo = [
     opCode:'=',
     opFunction: ''
   },
+  {
+    opID:'negative',
+    opCode:'±'
+  }
 ];
+
+//Test Expressions
+const testNegative = /^-/g, 
+      testDecimal = /./g,
+      testOperator = /add|subtract|divide|multiply/;
+
+
 
 /* COMBINED CALCULATOR COMPONENT */
 class CalculatorApp extends React.Component {
@@ -124,56 +135,68 @@ class CalculatorApp extends React.Component {
       Once an operator is pressed, it goes into another state "AwaitingNextValue" where the current, now previous value is stored while a new value is inputted by the user,
       during this time pressing an operator won't affix a new previous state but simply changes the current and buffered operator function.
 
+      % Creating the decimal function %
+      Effectively, I need use ES6 to test the 'currentValue' to see if theres a decimal in there anywhere and if there is, prevent another one from being put in. 
+      This should be fairly easy.
+
+      %Creating the Positive/Negative Function%
+      Similar to above, with ES6, perform a test to see if there's a - (because positive numbers don't need indicators) at the beginning of the value string and
+      if there is, I remove it or add one when the button is pressed. \UPDATE\ I was thinking way too hard about that one, just adding a "-" to the current value
+      works just as fine
       */
 
-    performOperator(){
+    performOperator(){ //Lets you perform calculations based on the current operator
       let curEq = Object.assign({},this.state.currentEquation);
       switch(this.state.bufferedOperator){
         case 'add' :
           curEq.val1 = parseInt(this.state.previousValue)
           curEq.val2 = parseInt(this.state.currentValue)
-          console.log(curEq.val1,curEq.val2,this.state.previousValue);
           curEq.fullEq =`${curEq.val1} + ${curEq.val2} =`
           curEq.answer = parseInt(this.state.previousValue) + parseInt(this.state.currentValue)
           this.setState(state =>({
-            currentDisplay: curEq.answer,
-            previousDisplay: curEq.fullEq
+            currentDisplay: curEq.answer.toString(),
+            previousDisplay: curEq.fullEq,
+            currentValue: state.currentValue,
+            previousValue: curEq.answer.toString() 
           }))
         break;
 
         case 'subtract' :
           curEq.val1 = parseInt(this.state.previousValue)
           curEq.val2 = parseInt(this.state.currentValue)
-          console.log(curEq.val1,curEq.val2,this.state.previousValue);
-          curEq.fullEq =`${curEq.val1} + ${curEq.val2} =`
+          curEq.fullEq =`${curEq.val1} - ${curEq.val2} =`
           curEq.answer = parseInt(this.state.previousValue) - parseInt(this.state.currentValue)
           this.setState(state =>({
-            currentDisplay: curEq.answer,
-            previousDisplay: curEq.fullEq
+            currentDisplay: curEq.answer.toString(),
+            previousDisplay: curEq.fullEq,
+            currentValue: state.currentValue,
+            previousValue: curEq.answer.toString() 
           }))
         break;
 
         case 'divide' :
           curEq.val1 = parseInt(this.state.previousValue)
           curEq.val2 = parseInt(this.state.currentValue)
-          console.log(curEq.val1,curEq.val2,this.state.previousValue);
-          curEq.fullEq =`${curEq.val1} + ${curEq.val2} =`
+          curEq.fullEq =`${curEq.val1} / ${curEq.val2} =`
           curEq.answer = parseInt(this.state.previousValue) / parseInt(this.state.currentValue)
           this.setState(state =>({
-            currentDisplay: curEq.answer,
-            previousDisplay: curEq.fullEq
+            currentDisplay: curEq.answer.toString(),
+            previousDisplay: curEq.fullEq,
+            currentValue: state.currentValue,
+            previousValue: curEq.answer.toString() 
           }))
         break;
 
         case 'multiply' :
           curEq.val1 = parseInt(this.state.previousValue)
           curEq.val2 = parseInt(this.state.currentValue)
-          console.log(curEq.val1,curEq.val2,this.state.previousValue);
-          curEq.fullEq =`${curEq.val1} + ${curEq.val2} =`
+          curEq.fullEq =`${curEq.val1} x ${curEq.val2} =`
           curEq.answer = parseInt(this.state.previousValue) * parseInt(this.state.currentValue)
           this.setState(state =>({
-            currentDisplay: curEq.answer,
-            previousDisplay: curEq.fullEq
+            currentDisplay: curEq.answer.toString(),
+            previousDisplay: curEq.fullEq,
+            currentValue: state.currentValue,
+            previousValue: curEq.answer.toString() 
           }))
         break;
         
@@ -182,20 +205,44 @@ class CalculatorApp extends React.Component {
       }
     };
 
+    toggleNegative(){ //Sets the currently inputed value to negative or positive
+      if (testNegative.test(this.state.currentValue)){
+        this.setState(state => ({
+          currentDisplay: state.currentDisplay.replace(/^-/g, ''),
+          currentValue: state.currentValue.replace(/^-/g, '')
+        }))
+      } else {
+        let nVal = "-"
+        this.setState({
+          currentDisplay: nVal + this.state.currentDisplay,
+          currentValue: nVal + this.state.currentValue
+        }
+        );
+      };
+    };
+
     /*This would ID the last operator that was pressed as a button and buffer it until "equals" is pressed or 
       another operator is pressed after a new value is added. After which, the operator function is performed in the function above*/
     updateOperator(opID, opCode){ 
-      if(opID !== 'equals'){
-        console.log(this.state.previousValue)
+      switch (opID) {
+        case 'add':
+        case 'subtract':
+        case 'divide':
+        case 'multiply':
+          console.log(this.state.previousValue)
         this.setState(state => ({
           currentOperator: opCode,
           bufferedOperator: opID,
           previousValue: state.currentValue,
           previousDisplay: state.currentDisplay
-        }));
-        
-      } else {
-        this.performOperator()
+        }))
+          break;
+        case 'negative':
+          this.toggleNegative()
+          break;
+
+        default:
+          this.performOperator()
       }
     };
 
@@ -226,7 +273,14 @@ class CalculatorApp extends React.Component {
             updateOperator={this.updateOperator}
           />
           <p>{this.state.previousDisplay} {this.state.currentOperator}</p>
-          <p>{this.state.currentDisplay}</p>
+          <p id='display'>{this.state.currentDisplay}</p>
+          <div>
+            Console Logs:<br />
+            Display:{this.state.currentDisplay}<br />
+            Value:{this.state.currentValue}<br />
+            previousDisplay:{this.state.previousDisplay}<br />
+            previousValue:{this.state.previousValue}
+          </div>
         </div>
         
       )

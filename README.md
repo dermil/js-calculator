@@ -10,7 +10,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
     -~~Can Multiply~~
     -Decimal Point can be placed no more than once
     -Can Reset Current equations
-    -Can Repeat last function
+    -~~Can Repeat last function~~
+    -~~Can make a number negative from positive or vice versa~~
 
 
 -Transitionary Functions between states (?)
