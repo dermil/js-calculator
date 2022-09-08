@@ -89,13 +89,17 @@ const operatorInfo = [
   {
     opID:'negative',
     opCode:'±'
+  },
+  {
+    opID: 'clear',
+    opCode: 'CE'
   }
 ];
 
 //Test Expressions
 const testNegative = /^-/g, 
-      testDecimal = /./g,
-      testOperator = /add|subtract|divide|multiply/;
+      testDecimal = /[.]/g,
+      testZeroes = /^[0]./;
 
 
 
@@ -149,10 +153,10 @@ class CalculatorApp extends React.Component {
       let curEq = Object.assign({},this.state.currentEquation);
       switch(this.state.bufferedOperator){
         case 'add' :
-          curEq.val1 = parseInt(this.state.previousValue)
-          curEq.val2 = parseInt(this.state.currentValue)
+          curEq.val1 = parseFloat(this.state.previousValue)
+          curEq.val2 = parseFloat(this.state.currentValue)
           curEq.fullEq =`${curEq.val1} + ${curEq.val2} =`
-          curEq.answer = parseInt(this.state.previousValue) + parseInt(this.state.currentValue)
+          curEq.answer = curEq.val1 + curEq.val2
           this.setState(state =>({
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
@@ -162,10 +166,10 @@ class CalculatorApp extends React.Component {
         break;
 
         case 'subtract' :
-          curEq.val1 = parseInt(this.state.previousValue)
-          curEq.val2 = parseInt(this.state.currentValue)
+          curEq.val1 = parseFloat(this.state.previousValue)
+          curEq.val2 = parseFloat(this.state.currentValue)
           curEq.fullEq =`${curEq.val1} - ${curEq.val2} =`
-          curEq.answer = parseInt(this.state.previousValue) - parseInt(this.state.currentValue)
+          curEq.answer = curEq.val1 - curEq.val2
           this.setState(state =>({
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
@@ -175,10 +179,10 @@ class CalculatorApp extends React.Component {
         break;
 
         case 'divide' :
-          curEq.val1 = parseInt(this.state.previousValue)
-          curEq.val2 = parseInt(this.state.currentValue)
+          curEq.val1 = parseFloat(this.state.previousValue)
+          curEq.val2 = parseFloat(this.state.currentValue)
           curEq.fullEq =`${curEq.val1} / ${curEq.val2} =`
-          curEq.answer = parseInt(this.state.previousValue) / parseInt(this.state.currentValue)
+          curEq.answer = curEq.val1 / curEq.val2
           this.setState(state =>({
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
@@ -188,10 +192,10 @@ class CalculatorApp extends React.Component {
         break;
 
         case 'multiply' :
-          curEq.val1 = parseInt(this.state.previousValue)
-          curEq.val2 = parseInt(this.state.currentValue)
+          curEq.val1 = parseFloat(this.state.previousValue)
+          curEq.val2 = parseFloat(this.state.currentValue)
           curEq.fullEq =`${curEq.val1} x ${curEq.val2} =`
-          curEq.answer = parseInt(this.state.previousValue) * parseInt(this.state.currentValue)
+          curEq.answer = curEq.val1 * curEq.val2
           this.setState(state =>({
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
@@ -241,6 +245,21 @@ class CalculatorApp extends React.Component {
           this.toggleNegative()
           break;
 
+        case 'clear':
+          this.initialize()
+          break;
+
+        case 'decimal':
+          if (testDecimal.test(this.state.currentValue)){
+            //if true do nothing
+          } else {
+            this.setState(state =>({
+              currentDisplay: state.currentDisplay += ".",
+              currentValue: state.currentValue+= "."
+            }))
+          }
+          break;
+
         default:
           this.performOperator()
       }
@@ -257,8 +276,16 @@ class CalculatorApp extends React.Component {
       this.setState({
         currentDisplay: '0',
         currentValue:'0',
+        currentOperator: '',
         previousDisplay: '',
-        previousValue: ''
+        previousValue: '',
+        bufferedOperator: '',
+        currentEquation: {
+          val1: 0,
+          val2: 0,
+          fullEq: 0,
+          answer: 0
+        }
       })
     };
 
