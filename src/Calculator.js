@@ -3,24 +3,19 @@ import { ReactDOM } from "react";
 
 const numberInfo = [
   {
-    numID: 'zero',
-    numCode: '0',
-    numValue: 0,
+    numID: 'seven',
+    numCode: '7',
+    numValue: 7,
   },
   {
-    numID: 'one',
-    numCode: '1',
-    numValue: 1,
+    numID: 'eight',
+    numCode: '8',
+    numValue: 8,
   },
   {
-    numID: 'two',
-    numCode: '2',
-    numValue: 2,
-  },
-  {
-    numID: 'three',
-    numCode: '3',
-    numValue: 3,
+    numID: 'nine',
+    numCode: '9',
+    numValue: 9,
   },
   {
     numID: 'four',
@@ -36,23 +31,23 @@ const numberInfo = [
     numID: 'six',
     numCode: '6',
     numValue: 6,
+  }, 
+  {
+    numID: 'one',
+    numCode: '1',
+    numValue: 1,
   },
   {
-    numID: 'seven',
-    numCode: '7',
-    numValue: 7,
+    numID: 'two',
+    numCode: '2',
+    numValue: 2,
   },
   {
-    numID: 'eight',
-    numCode: '8',
-    numValue: 8,
-  },
-  {
-    numID: 'nine',
-    numCode: '9',
-    numValue: 9,
+    numID: 'three',
+    numCode: '3',
+    numValue: 3,
   }
-
+  
 ];
 
 const operatorInfo = [
@@ -77,30 +72,43 @@ const operatorInfo = [
     opFunction: ''
   },
   {
-    opID:'decimal',
-    opCode:'.',
-    opFunction: ''
-  },
-  {
     opID:'equals',
     opCode:'=',
     opFunction: ''
-  },
+  }
+  
+];
+
+const specialInfo = [
   {
     opID:'negative',
     opCode:'±'
   },
   {
+    numID: 'zero',
+    numCode: '0',
+    numValue: 0,
+  },
+  {
+    opID:'decimal',
+    opCode:'.',
+    opFunction: ''
+  },
+  {
     opID: 'clear',
     opCode: 'CE'
   }
-];
+]
 
 //Test Expressions
 const testNegative = /^-/g, 
       testDecimal = /[.]/g,
-      testZeroes = /^[0]./;
+      testZeroes = /^[0]$/;
 
+//States
+const Awaiting_Input = 'Awaiting_Input',
+      Awaiting_Fresh_Input = 'Awaiting_Fresh_Input',
+      Receiving_Input = 'Receiving_Input';
 
 
 /* COMBINED CALCULATOR COMPONENT */
@@ -108,9 +116,10 @@ class CalculatorApp extends React.Component {
     constructor(props){
         super(props);
         this.state = {
+          actionState: 'Awaiting_Input',
           currentDisplay: '0',
           currentValue:'0',
-          currentOperator: '',
+          currentOperator: '##',
           previousDisplay: '',
           previousValue: '',
           bufferedOperator: '',
@@ -147,8 +156,16 @@ class CalculatorApp extends React.Component {
       Similar to above, with ES6, perform a test to see if there's a - (because positive numbers don't need indicators) at the beginning of the value string and
       if there is, I remove it or add one when the button is pressed. \UPDATE\ I was thinking way too hard about that one, just adding a "-" to the current value
       works just as fine
+    
+      %Adding Input States%
+      From what I can tell there should be about 3 states specifically: 1. The state where it's anticipating a fresh input, where it clears the current values upon
+      receiving a new input.
+      2. The state where it's anticipating a new input after providing an answer, where it clears all previous and current values after receiving one.
+      3. The state where upon receiving an initial input, after clearing previous ones from either of the two other states, it will accept more inputs without
+      clearing anything, until an operator is pressed
       */
 
+    
     performOperator(){ //Lets you perform calculations based on the current operator
       let curEq = Object.assign({},this.state.currentEquation);
       switch(this.state.bufferedOperator){
@@ -161,7 +178,8 @@ class CalculatorApp extends React.Component {
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
             currentValue: state.currentValue,
-            previousValue: curEq.answer.toString() 
+            previousValue: curEq.answer.toString(),
+            actionState: Awaiting_Fresh_Input 
           }))
         break;
 
@@ -174,7 +192,8 @@ class CalculatorApp extends React.Component {
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
             currentValue: state.currentValue,
-            previousValue: curEq.answer.toString() 
+            previousValue: curEq.answer.toString(),
+            actionState: Awaiting_Fresh_Input 
           }))
         break;
 
@@ -187,7 +206,8 @@ class CalculatorApp extends React.Component {
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
             currentValue: state.currentValue,
-            previousValue: curEq.answer.toString() 
+            previousValue: curEq.answer.toString(),
+            actionState: Awaiting_Fresh_Input 
           }))
         break;
 
@@ -200,7 +220,8 @@ class CalculatorApp extends React.Component {
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
             currentValue: state.currentValue,
-            previousValue: curEq.answer.toString() 
+            previousValue: curEq.answer.toString(),
+            actionState: Awaiting_Fresh_Input 
           }))
         break;
         
@@ -230,7 +251,6 @@ class CalculatorApp extends React.Component {
     updateOperator(opID, opCode){ 
       switch (opID) {
         case 'add':
-        case 'subtract':
         case 'divide':
         case 'multiply':
           console.log(this.state.previousValue)
@@ -238,9 +258,25 @@ class CalculatorApp extends React.Component {
           currentOperator: opCode,
           bufferedOperator: opID,
           previousValue: state.currentValue,
-          previousDisplay: state.currentDisplay
-        }))
+          previousDisplay: state.currentDisplay,
+          actionState: Awaiting_Input
+        }));
           break;
+        
+        case 'subtract':
+          if (this.state.bufferedOperator == ''){
+            this.setState(state => ({
+              currentOperator: opCode,
+              bufferedOperator: opID,
+              previousValue: state.currentValue,
+              previousDisplay: state.currentDisplay,
+              actionState: Awaiting_Input
+            }))
+          } else {
+            this.toggleNegative();
+          };
+        break;
+
         case 'negative':
           this.toggleNegative()
           break;
@@ -255,7 +291,8 @@ class CalculatorApp extends React.Component {
           } else {
             this.setState(state =>({
               currentDisplay: state.currentDisplay += ".",
-              currentValue: state.currentValue+= "."
+              currentValue: state.currentValue+= ".",
+              actionState: Receiving_Input
             }))
           }
           break;
@@ -265,12 +302,46 @@ class CalculatorApp extends React.Component {
       }
     };
 
-    updateValue(value){
-      this.setState(state =>({
-        currentDisplay: state.currentDisplay += value,
-        currentValue: state.currentValue+= value
-      }))
-    };
+    updateValue(value){ //Updates the data values
+      switch(this.state.actionState){
+        case Awaiting_Input:
+          this.setState(state =>({
+            currentDisplay:  value.toString(),
+            currentValue: value.toString(),
+            actionState: Receiving_Input
+          }));
+          break;
+
+        case Awaiting_Fresh_Input:
+          this.initialize()
+          this.setState(state =>({
+            currentDisplay:  value.toString(),
+            currentValue: value.toString(),
+            actionState: Receiving_Input
+          }));
+          break;
+
+        default:
+          if(value == 0){
+            if(testZeroes.test(this.state.currentValue)){
+              //if there is a zero at the beginning do nothing
+            } else {
+              this.setState(state =>({
+                currentDisplay: state.currentDisplay += value,
+                currentValue: state.currentValue+= value
+              }));
+            };
+          } else {
+            this.setState(state =>({
+              currentDisplay: state.currentDisplay += value,
+              currentValue: state.currentValue+= value
+            }));
+          };
+          
+        };
+      }
+      
+      
 
     initialize(){
       this.setState({
@@ -291,16 +362,12 @@ class CalculatorApp extends React.Component {
 
     render () {
       return (
-        <div>
-          <NumberPad 
-            updateNumbers={this.updateValue} //Update's the state's value with a number
-            
-          />
-          <OperatorPad
-            updateOperator={this.updateOperator}
-          />
-          <p>{this.state.previousDisplay} {this.state.currentOperator}</p>
-          <p id='display'>{this.state.currentDisplay}</p>
+        <div id='calculator'>
+          <div id='showcase'>
+            <p id='history'>{this.state.previousDisplay} {this.state.currentOperator}</p>
+            <p id='display' className="fs-1 fw-bold">{this.state.currentDisplay}</p>
+          </div>
+          
           <div>
             Console Logs:<br />
             Display:{this.state.currentDisplay}<br />
@@ -308,6 +375,29 @@ class CalculatorApp extends React.Component {
             previousDisplay:{this.state.previousDisplay}<br />
             previousValue:{this.state.previousValue}
           </div>
+          <div id='buttonContainer'>
+            <div id='numpad'>
+              <ClearPad
+                updateOperator={this.updateOperator}
+              />
+              <NumberPad 
+                updateNumbers={this.updateValue} //Update's the state's value with a number
+              />
+              <SpecialPad
+                updateNumbers={this.updateValue}
+                updateOperator={this.updateOperator}
+              />
+            </div>
+            
+            <div id='operators'>
+              <OperatorPad
+                updateOperator={this.updateOperator}
+              />
+            </div>
+          </div>
+          
+          
+          
         </div>
         
       )
@@ -375,7 +465,7 @@ class NumberPad extends React.Component {
     }
     );
 
-    return <div id='numpad'>{numPad}</div>
+    return <div id='numbers'>{numPad}</div>
   }
 }
 
@@ -437,13 +527,55 @@ class OperatorPad extends React.Component {
     })
 
     return <div>{opPad}</div>
-    /* return(
-      <OperatorButton
-      opID={operatorInfo[0].opID}
-      opCode={operatorInfo[0].opCode}  
-      updateOp={this.props.updateOperator}
-      />
-    ) */
+  };
+};
+
+class SpecialPad extends React.Component {
+  constructor(props){
+    super(props);
+  }
+
+  render(){
+    return (
+      <div id="specialPad">
+        <OperatorButton 
+          opID={specialInfo[0].opID} //This is for the negative button
+          opCode={specialInfo[0].opCode}
+          updateOp={this.props.updateOperator}
+        />
+
+        <NumberButton //Zero button
+          numberID={specialInfo[1].numID}
+          numCode={specialInfo[1].numCode}
+          numValue={specialInfo[1].numValue}
+          updateNum={this.props.updateNumbers}
+        />
+
+        <OperatorButton  //Period(.) button
+          opID={specialInfo[2].opID}
+          opCode={specialInfo[2].opCode}
+          updateOp={this.props.updateOperator}
+        />
+      </div>
+    )
+  };
+};
+
+class ClearPad extends React.Component {
+  constructor(props){
+    super(props);
+  }
+
+  render(){
+    return (
+      <div id="clearPad">
+        <OperatorButton 
+          opID={specialInfo[3].opID}
+          opCode={specialInfo[3].opCode}
+          updateOp={this.props.updateOperator}
+        />
+      </div>
+    )
   };
 };
 export default CalculatorApp;
