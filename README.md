@@ -3,7 +3,8 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 ## To Do List
 ### Functionality
--The calculator can Perform Basic functions
+-The calculator can Perform these Basic functions\
+
     -~~Can Add~~
     -~~Can Divide~~
     -~~Can Subtract~~
@@ -14,21 +15,30 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
     -~~Can make a number negative from positive or vice versa~~
 
 
--Transitionary Functions between states (?)
+-Transitionary Functions between states (?)\
+
     I don't know what this would specifically be called but it refers to things such as the initial '0' value being replaced entirely when a new number is inputted.
     Or when a new number is being inputted by the user, the old number and value getting replaced after recieving the new input. Those sort of transitions.
 
-    -When inputting a number from the initial state, the 0 in the calculator is replaced in the display.
-    -When inputting a new number after applying an operator, the previousValue is replaced in the display.
+    -~~When inputting a number from the initial state, the 0 in the calculator is replaced in the display~~
+    -~~When inputting a new number after applying an operator, the previousValue is replaced in the display~~
     -When displaying the newly found solution, the previous Operator will not be visible.
 
 
 ### Looks
--Everything
-## Available Scripts
+Pretty much everything about the looks has changed significantly to act very similarly to the current default Windows 10 Calculator. 
+Some things, such as the debug values and height need to change once all functionality is complete!
 
-In the project directory, you can run:
+### Version Notes
+This current, most recent version has had a lot of changes to the way subtraction works for the sake of completing the FCC tests. Most, if not all of these will be reverted
+and merge into the main branch once the tests can be passed! 
 
+The details of the changes are: 
+
+    -The subtraction(-) button will trigger the toggleNegative() function if performed immediately after any other operator, as is required from the FCC tests
+    -The toggleNegative() script will now affect either the displayed currentValue or the displayed currentOperator depending on the button used to toggle it
+    -The performOperators() function had to also be changed and now has a regex test on the currentOperator based on the changes above
+    
 ### `npm start`
 
 Runs the app in the development mode.\

@@ -103,7 +103,8 @@ const specialInfo = [
 //Test Expressions
 const testNegative = /^-/g, 
       testDecimal = /[.]/g,
-      testZeroes = /^[0]$/;
+      testZeroes = /^[0]$/,
+      testAnyNegative = /.-$/g;
 
 //States
 const Awaiting_Input = 'Awaiting_Input',
@@ -172,8 +173,12 @@ class CalculatorApp extends React.Component {
         case 'add' :
           curEq.val1 = parseFloat(this.state.previousValue)
           curEq.val2 = parseFloat(this.state.currentValue)
-          curEq.fullEq =`${curEq.val1} + ${curEq.val2} =`
-          curEq.answer = curEq.val1 + curEq.val2
+          curEq.fullEq =`${curEq.val1} ${this.state.currentOperator} ${curEq.val2} =`
+          if (testAnyNegative.test(this.state.currentOperator)){
+            curEq.answer = curEq.val1 + -curEq.val2
+          } else {
+            curEq.answer = curEq.val1 + curEq.val2
+          }
           this.setState(state =>({
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
@@ -186,8 +191,12 @@ class CalculatorApp extends React.Component {
         case 'subtract' :
           curEq.val1 = parseFloat(this.state.previousValue)
           curEq.val2 = parseFloat(this.state.currentValue)
-          curEq.fullEq =`${curEq.val1} - ${curEq.val2} =`
-          curEq.answer = curEq.val1 - curEq.val2
+          curEq.fullEq =`${curEq.val1} ${this.state.currentOperator} ${curEq.val2} =`
+          if (testAnyNegative.test(this.state.currentOperator)){
+            curEq.answer = curEq.val1 - -curEq.val2
+          } else {
+            curEq.answer = curEq.val1 - curEq.val2
+          }
           this.setState(state =>({
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
@@ -200,8 +209,12 @@ class CalculatorApp extends React.Component {
         case 'divide' :
           curEq.val1 = parseFloat(this.state.previousValue)
           curEq.val2 = parseFloat(this.state.currentValue)
-          curEq.fullEq =`${curEq.val1} / ${curEq.val2} =`
-          curEq.answer = curEq.val1 / curEq.val2
+          curEq.fullEq =`${curEq.val1} ${this.state.currentOperator} ${curEq.val2} =`
+          if (testAnyNegative.test(this.state.currentOperator)){
+            curEq.answer = curEq.val1 / -curEq.val2
+          } else {
+            curEq.answer = curEq.val1 / curEq.val2
+          }
           this.setState(state =>({
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
@@ -214,8 +227,12 @@ class CalculatorApp extends React.Component {
         case 'multiply' :
           curEq.val1 = parseFloat(this.state.previousValue)
           curEq.val2 = parseFloat(this.state.currentValue)
-          curEq.fullEq =`${curEq.val1} x ${curEq.val2} =`
-          curEq.answer = curEq.val1 * curEq.val2
+          curEq.fullEq =`${curEq.val1} ${this.state.currentOperator} ${curEq.val2} =`
+          if (testAnyNegative.test(this.state.currentOperator)){
+            curEq.answer = curEq.val1 * -curEq.val2
+          } else {
+            curEq.answer = curEq.val1 * curEq.val2
+          }
           this.setState(state =>({
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
@@ -230,20 +247,35 @@ class CalculatorApp extends React.Component {
       }
     };
 
-    toggleNegative(){ //Sets the currently inputed value to negative or positive
-      if (testNegative.test(this.state.currentValue)){
-        this.setState(state => ({
-          currentDisplay: state.currentDisplay.replace(/^-/g, ''),
-          currentValue: state.currentValue.replace(/^-/g, '')
-        }))
-      } else {
-        let nVal = "-"
-        this.setState({
-          currentDisplay: nVal + this.state.currentDisplay,
-          currentValue: nVal + this.state.currentValue
-        }
-        );
-      };
+    toggleNegative(location){ //Sets the currently inputed value to negative or positive
+      if (location === 'negativeButton') {
+        if (testNegative.test(this.state.currentValue)){
+          this.setState(state => ({ //remove any negatives if they're there
+            currentDisplay: state.currentDisplay.replace(/^-/g, ''),
+            currentValue: state.currentValue.replace(/^-/g, '')
+          }))
+        } else {
+          let nVal = "-"
+          this.setState({//add a negative to the beginning of the number
+            currentDisplay: nVal + this.state.currentDisplay,
+            currentValue: nVal + this.state.currentValue
+          }
+          );
+        };
+      } else { //if the call for this function is from the subtract button
+        if (testAnyNegative.test(this.state.currentOperator)){
+          this.setState(state => ({ //remove any negatives if they're there
+            currentOperator: state.currentOperator.replace(/-/g, ''),
+          }))
+        } else {
+          let nVal = "-"
+          this.setState(state => ({//add a negative to the beginning of the number
+            currentOperator: state.currentOperator += nVal
+          }
+          ));
+        };
+      }
+      
     };
 
     /*This would ID the last operator that was pressed as a button and buffer it until "equals" is pressed or 
@@ -273,12 +305,13 @@ class CalculatorApp extends React.Component {
               actionState: Awaiting_Input
             }))
           } else {
-            this.toggleNegative();
+            this.toggleNegative('subtractButton')
+            
           };
         break;
 
         case 'negative':
-          this.toggleNegative()
+          this.toggleNegative('negativeButton')
           break;
 
         case 'clear':
@@ -345,9 +378,10 @@ class CalculatorApp extends React.Component {
 
     initialize(){
       this.setState({
+        actionState: 'Awaiting_Input',
         currentDisplay: '0',
         currentValue:'0',
-        currentOperator: '',
+        currentOperator: '##',
         previousDisplay: '',
         previousValue: '',
         bufferedOperator: '',
