@@ -3,7 +3,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 ## To Do List
 ### Functionality
--The calculator can Perform these Basic functions\
+-The calculator can Perform these Basic functions
 
     -~~Can Add~~
     -~~Can Divide~~
@@ -15,7 +15,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
     -~~Can make a number negative from positive or vice versa~~
 
 
--Transitionary Functions between states (?)\
+-Transitionary Functions between states (?)
 
     I don't know what this would specifically be called but it refers to things such as the initial '0' value being replaced entirely when a new number is inputted.
     Or when a new number is being inputted by the user, the old number and value getting replaced after recieving the new input. Those sort of transitions.
@@ -38,7 +38,7 @@ The details of the changes are:
     -The subtraction(-) button will trigger the toggleNegative() function if performed immediately after any other operator, as is required from the FCC tests
     -The toggleNegative() script will now affect either the displayed currentValue or the displayed currentOperator depending on the button used to toggle it
     -The performOperators() function had to also be changed and now has a regex test on the currentOperator based on the changes above
-    
+
 ### `npm start`
 
 Runs the app in the development mode.\
