@@ -136,6 +136,9 @@ class CalculatorApp extends React.Component {
         this.updateOperator = this.updateOperator.bind(this);
         this.initialize = this.initialize.bind(this);
         this.performOperator = this.performOperator.bind(this);
+        this.displayCalculation = this.displayCalculation.bind(this);
+        this.toggleNegative = this.toggleNegative.bind(this);
+        this.subtractButton = this.subtractButton.bind(this);
     };
 
     /* Hello future Dermil, you just spent a while thinking of how to make this calculator perform actions on the values that the user puts and have come up with a solid
@@ -166,7 +169,18 @@ class CalculatorApp extends React.Component {
       clearing anything, until an operator is pressed
       */
 
-    
+      displayCalculation(curEq){
+        this.setState(state =>({
+          currentDisplay: curEq.answer.toFixed(8).toString(),
+          previousDisplay: curEq.fullEq,
+          currentValue: curEq.answer.toFixed(8),
+          previousValue: curEq.answer.toFixed(8).toString(),
+          bufferedOperator: '',
+          currentOperator: '',
+          actionState: Awaiting_Fresh_Input 
+        }));
+      };
+
     performOperator(){ //Lets you perform calculations based on the current operator
       let curEq = Object.assign({},this.state.currentEquation);
       switch(this.state.bufferedOperator){
@@ -178,16 +192,8 @@ class CalculatorApp extends React.Component {
             curEq.answer = curEq.val1 + -curEq.val2
           } else {
             curEq.answer = curEq.val1 + curEq.val2
-          }
-          this.setState(state =>({
-            currentDisplay: curEq.answer.toString(),
-            previousDisplay: curEq.fullEq,
-            currentValue: curEq.answer,
-            previousValue: curEq.answer.toString(),
-            bufferedOperator: '',
-            currentOperator: '',
-            actionState: Awaiting_Fresh_Input 
-          }))
+          };
+          this.displayCalculation(curEq);
         break;
 
         case 'subtract' :
@@ -198,16 +204,8 @@ class CalculatorApp extends React.Component {
             curEq.answer = curEq.val1 - -curEq.val2
           } else {
             curEq.answer = curEq.val1 - curEq.val2
-          }
-          this.setState(state =>({
-            currentDisplay: curEq.answer.toString(),
-            previousDisplay: curEq.fullEq,
-            currentValue: curEq.answer,
-            previousValue: curEq.answer.toString(),
-            bufferedOperator: '',
-            currentOperator: '',
-            actionState: Awaiting_Fresh_Input 
-          }))
+          };
+          this.displayCalculation(curEq);
         break;
 
         case 'divide' :
@@ -219,15 +217,7 @@ class CalculatorApp extends React.Component {
           } else {
             curEq.answer = curEq.val1 / curEq.val2
           }
-          this.setState(state =>({
-            currentDisplay: curEq.answer.toString(),
-            previousDisplay: curEq.fullEq,
-            currentValue: curEq.answer,
-            previousValue: curEq.answer.toString(),
-            bufferedOperator: '',
-            currentOperator: '',
-            actionState: Awaiting_Fresh_Input 
-          }))
+          this.displayCalculation(curEq);
         break;
 
         case 'multiply' :
@@ -238,16 +228,8 @@ class CalculatorApp extends React.Component {
             curEq.answer = curEq.val1 * -curEq.val2
           } else {
             curEq.answer = curEq.val1 * curEq.val2
-          }
-          this.setState(state =>({
-            currentDisplay: curEq.answer.toString(),
-            previousDisplay: curEq.fullEq,
-            currentValue: curEq.answer,
-            previousValue: curEq.answer.toString(),
-            bufferedOperator: '',
-            currentOperator: '',
-            actionState: Awaiting_Fresh_Input 
-          }))
+          };
+          this.displayCalculation(curEq);
         break;
         
         default:
