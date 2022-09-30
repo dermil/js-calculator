@@ -3,7 +3,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 ## To Do List
 ### Functionality
--The calculator can Perform these Basic functions
+#### The calculator can Perform these Basic functions
 
     - [x] Can Add
     - [x] Can Divide
@@ -15,10 +15,11 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
     - [x] Can make a number negative from positive or vice versa
 
 
--Transitionary Functions between states (?)
+#### Transitionary Functions between states (?)
 
 I don't know what this would specifically be called but it refers to things such as the initial '0' value being replaced entirely when a new number is inputted.
 Or when a new number is being inputted by the user, the old number and value getting replaced after recieving the new input. Those sort of transitions.
+
     - [x] When inputting a number from the initial state, the 0 in the calculator is replaced in the display
     - [x] When inputting a new number after applying an operator, the previousValue is replaced in the display
     - [x] When displaying the newly found solution, the previous Operator will not be visible.
