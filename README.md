@@ -4,23 +4,24 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## To Do List
 ### Functionality
 -The calculator can Perform these Basic functions
-    * [x] Can Add
-    * [x] Can Divide
-    * [x] Can Subtract
-    * [x] Can Multiply
-    * [x] Decimal Point can be placed no more than once
-    * [x] Can Reset Current equations
-    * [x] Can Repeat last function
-    * [x] Can make a number negative from positive or vice versa
+
+    - [x] Can Add
+    - [x] Can Divide
+    - [x] Can Subtract
+    - [x] Can Multiply
+    - [x] Decimal Point can be placed no more than once
+    - [x] Can Reset Current equations
+    - [x] Can Repeat last function
+    - [x] Can make a number negative from positive or vice versa
 
 
 -Transitionary Functions between states (?)
 
 I don't know what this would specifically be called but it refers to things such as the initial '0' value being replaced entirely when a new number is inputted.
 Or when a new number is being inputted by the user, the old number and value getting replaced after recieving the new input. Those sort of transitions.
-    * [x] When inputting a number from the initial state, the 0 in the calculator is replaced in the display
-    * [x] When inputting a new number after applying an operator, the previousValue is replaced in the display
-    * [x] When displaying the newly found solution, the previous Operator will not be visible.
+    - [x] When inputting a number from the initial state, the 0 in the calculator is replaced in the display
+    - [x] When inputting a new number after applying an operator, the previousValue is replaced in the display
+    - [x] When displaying the newly found solution, the previous Operator will not be visible.
 
 
 ### Looks
@@ -62,7 +63,7 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 ### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+-Note: this is a one-way operation. Once you `eject`, you can't go back!-
 
 If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
