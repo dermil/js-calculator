@@ -3,16 +3,16 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 ## To Do List
 ### Functionality
--The calculator can Perform these Basic functions:
+-The calculator can Perform these Basic functions
 
-    -~~Can Add~~
-    -~~Can Divide~~
-    -~~Can Subtract~~
-    -~~Can Multiply~~
-    -~~Decimal Point can be placed no more than once~~
-    -~~Can Reset Current equations~~
-    -~~Can Repeat last function~~
-    -~~Can make a number negative from positive or vice versa~~
+    * ~~Can Add~~
+    * ~~Can Divide~~
+    * ~~Can Subtract~~
+    * ~~Can Multiply~~
+    * ~~Decimal Point can be placed no more than once~~
+    * ~~Can Reset Current equations~~
+    * ~~Can Repeat last function~~
+    * ~~Can make a number negative from positive or vice versa~~
 
 
 -Transitionary Functions between states (?)
@@ -20,9 +20,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 I don't know what this would specifically be called but it refers to things such as the initial '0' value being replaced entirely when a new number is inputted.
 Or when a new number is being inputted by the user, the old number and value getting replaced after recieving the new input. Those sort of transitions.
 
-    -~~When inputting a number from the initial state, the 0 in the calculator is replaced in the display~~
-    -~~When inputting a new number after applying an operator, the previousValue is replaced in the display~~
-    -When displaying the newly found solution, the previous Operator will not be visible.
+    * ~~When inputting a number from the initial state, the 0 in the calculator is replaced in the display~~
+    * ~~When inputting a new number after applying an operator, the previousValue is replaced in the display~~
+    * ~~When displaying the newly found solution, the previous Operator will not be visible.~~
 
 
 ### Looks
