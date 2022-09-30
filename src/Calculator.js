@@ -182,8 +182,10 @@ class CalculatorApp extends React.Component {
           this.setState(state =>({
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
-            currentValue: state.currentValue,
+            currentValue: curEq.answer,
             previousValue: curEq.answer.toString(),
+            bufferedOperator: '',
+            currentOperator: '',
             actionState: Awaiting_Fresh_Input 
           }))
         break;
@@ -200,8 +202,10 @@ class CalculatorApp extends React.Component {
           this.setState(state =>({
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
-            currentValue: state.currentValue,
+            currentValue: curEq.answer,
             previousValue: curEq.answer.toString(),
+            bufferedOperator: '',
+            currentOperator: '',
             actionState: Awaiting_Fresh_Input 
           }))
         break;
@@ -218,8 +222,10 @@ class CalculatorApp extends React.Component {
           this.setState(state =>({
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
-            currentValue: state.currentValue,
+            currentValue: curEq.answer,
             previousValue: curEq.answer.toString(),
+            bufferedOperator: '',
+            currentOperator: '',
             actionState: Awaiting_Fresh_Input 
           }))
         break;
@@ -236,8 +242,10 @@ class CalculatorApp extends React.Component {
           this.setState(state =>({
             currentDisplay: curEq.answer.toString(),
             previousDisplay: curEq.fullEq,
-            currentValue: state.currentValue,
+            currentValue: curEq.answer,
             previousValue: curEq.answer.toString(),
+            bufferedOperator: '',
+            currentOperator: '',
             actionState: Awaiting_Fresh_Input 
           }))
         break;
@@ -275,9 +283,21 @@ class CalculatorApp extends React.Component {
           ));
         };
       }
-      
     };
 
+    subtractButton(opID, opCode){
+      if (this.state.bufferedOperator == '' || this.state.bufferedOperator == 'subtract'){
+        this.setState(state => ({
+          currentOperator: opCode,
+          bufferedOperator: opID,
+          previousValue: state.currentValue,
+          previousDisplay: state.currentDisplay,
+          actionState: Awaiting_Input
+        }))
+      } else {
+        this.toggleNegative('subtractButton')
+      };
+    }
     /*This would ID the last operator that was pressed as a button and buffer it until "equals" is pressed or 
       another operator is pressed after a new value is added. After which, the operator function is performed in the function above*/
     updateOperator(opID, opCode){ 
@@ -285,7 +305,11 @@ class CalculatorApp extends React.Component {
         case 'add':
         case 'divide':
         case 'multiply':
-          console.log(this.state.previousValue)
+          
+        if(this.state.previousValue !== this.state.currentValue) {
+          this.performOperator();
+        };
+
         this.setState(state => ({
           currentOperator: opCode,
           bufferedOperator: opID,
@@ -296,7 +320,8 @@ class CalculatorApp extends React.Component {
           break;
         
         case 'subtract':
-          if (this.state.bufferedOperator == ''){
+          if (this.state.previousValue !== this.state.currentValue) {
+            this.performOperator();
             this.setState(state => ({
               currentOperator: opCode,
               bufferedOperator: opID,
@@ -305,9 +330,14 @@ class CalculatorApp extends React.Component {
               actionState: Awaiting_Input
             }))
           } else {
-            this.toggleNegative('subtractButton')
-            
-          };
+            setTimeout(
+              this.subtractButton(opID,opCode)
+              ,1000
+            )
+          }
+          
+          
+
         break;
 
         case 'negative':
@@ -404,11 +434,14 @@ class CalculatorApp extends React.Component {
           
           <div>
             Console Logs:<br />
+            State: {this.state.actionState}<br />
             Display:{this.state.currentDisplay}<br />
             Value:{this.state.currentValue}<br />
             previousDisplay:{this.state.previousDisplay}<br />
-            previousValue:{this.state.previousValue}
+            previousValue:{this.state.previousValue}<br />
+            currentOperator:{this.state.bufferedOperator}
           </div>
+          
           <div id='buttonContainer'>
             <div id='numpad'>
               <ClearPad
